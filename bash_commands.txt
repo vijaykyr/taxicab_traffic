@@ -1,0 +1,7 @@
+python streaming_wordcount.py \
+	--input_subscription projects/vijays-sandbox/subscriptions/beam
+
+python streaming_wordcount.py \
+	--input_subscription projects/vijays-sandbox/subscriptions/taxi_1
+
+pubsub subscriptions create --topic projects/pubsub-public-data/topics/taxirides-realtime taxi_1
