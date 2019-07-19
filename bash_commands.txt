@@ -1,3 +1,7 @@
+###iot_devices.py###
+python iot_devices.py --project=vijays-sandbox
+
+###
 python streaming_wordcount.py \
 	--input_subscription projects/vijays-sandbox/subscriptions/beam
 
