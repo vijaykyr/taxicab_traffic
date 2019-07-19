@@ -1,11 +1,6 @@
 ###iot_devices.py###
 python iot_devices.py --project=vijays-sandbox
 
-###
-python streaming_wordcount.py \
-	--input_subscription projects/vijays-sandbox/subscriptions/beam
-
-python streaming_wordcount.py \
-	--input_subscription projects/vijays-sandbox/subscriptions/taxi_1
-
-pubsub subscriptions create --topic projects/pubsub-public-data/topics/taxirides-realtime taxi_1
+###streaming_count.py###
+python streaming_count.py \
+	--input_topic projects/vijays-sandbox/topics/taxi_rides

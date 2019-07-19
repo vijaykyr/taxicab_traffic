@@ -1,4 +1,4 @@
-"""A streaming word-counting workflow.
+"""A streaming dataflow pipeline to count pub/sub messages.
 """
 
 from __future__ import absolute_import
@@ -32,11 +32,9 @@ class CountFn(beam.CombineFn):
 def run(argv=None):
   """Build and run the pipeline."""
   parser = argparse.ArgumentParser()
-  parser.add_argument(
-      '--output_topic', required=False,
-      help=('Output PubSub topic of the form '
-            '"projects/<PROJECT>/topic/<TOPIC>".'))
+  
   group = parser.add_mutually_exclusive_group(required=True)
+  
   group.add_argument(
       '--input_topic',
       help=('Input PubSub topic of the form '
@@ -67,7 +65,7 @@ def run(argv=None):
   # Read from PubSub into a PCollection.
 
 
-  windows = messages | beam.WindowInto(window.FixedWindows(15, 0))
+  windows = messages | beam.WindowInto(window.FixedWindows(size=15))
 
 
   #windows | 'write' >> WriteToText('raw.txt')
