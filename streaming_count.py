@@ -80,12 +80,12 @@ def run(argv=None):
   
   count_dict | 'write_bq' >> beam.io.WriteToBigQuery(
     table_spec,
-    write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
+    write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND, #WRITE_TRUNCATE not supported for streaming
     create_disposition=beam.io.BigQueryDisposition.CREATE_NEVER) #CREATE_IF_NEEDED didn't work, kept sleeping after create
 
 
   result = p.run()
-  result.wait_until_finish()
+  #result.wait_until_finish() #only do this if running with DirectRunner
 
 
 if __name__ == '__main__':

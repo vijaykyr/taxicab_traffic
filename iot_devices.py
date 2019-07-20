@@ -31,7 +31,7 @@ if __name__ == '__main__':
       logging.info('Creating pub/sub topic {}'.format(args.topic))
 
    while True:
-        num_trips = random.randint(1,11)
+        num_trips = random.randint(1,101)
         for i in range(num_trips):
           publisher.publish(topic_name,'taxi_ride')
         logging.info('Publishing: {}'.format(time.ctime()))

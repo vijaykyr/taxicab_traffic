@@ -4,3 +4,9 @@ python iot_devices.py --project=vijays-sandbox
 ###streaming_count.py###
 python streaming_count.py \
 	--input_topic projects/vijays-sandbox/topics/taxi_rides
+
+python streaming_count.py \
+	--input_topic projects/vijays-sandbox/topics/taxi_rides \
+	--runner=DataflowRunner \
+	--project=vijays-sandbox \
+	--temp_location=gs://vijays-sandbox/dataflow_streaming
