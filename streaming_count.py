@@ -5,6 +5,7 @@ from __future__ import absolute_import
 
 import argparse
 import logging
+from datetime import datetime
 
 from past.builtins import unicode
 
@@ -67,12 +68,21 @@ def run(argv=None):
 
   windows = messages | beam.WindowInto(window.FixedWindows(size=15))
 
-
-  #windows | 'write' >> WriteToText('raw.txt')
-
   count = windows | 'count' >> beam.CombineGlobally(CountFn()).without_defaults()
 
-  count | 'write2' >> WriteToText('count.txt')
+  def to_dict(count):
+    return {'rides_last_10_min':count,'time':datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+  count_dict = count | 'to_dict' >> beam.Map(to_dict)
+
+  # dataset_id.table_id (dataset needs to exist, but table will be created)
+  table_spec = 'vijays-sandbox:taxifare.traffic'
+  
+  count_dict | 'write_bq' >> beam.io.WriteToBigQuery(
+    table_spec,
+    write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
+    create_disposition=beam.io.BigQueryDisposition.CREATE_NEVER) #CREATE_IF_NEEDED didn't work, kept sleeping after create
+
 
   result = p.run()
   result.wait_until_finish()

@@ -3,6 +3,7 @@ import gzip
 import logging
 import argparse
 import datetime
+import random
 from google.cloud import pubsub
 
 """
@@ -30,6 +31,8 @@ if __name__ == '__main__':
       logging.info('Creating pub/sub topic {}'.format(args.topic))
 
    while True:
-        publisher.publish(topic_name,'taxi_ride')
+        num_trips = random.randint(1,11)
+        for i in range(num_trips):
+          publisher.publish(topic_name,'taxi_ride')
         logging.info('Publishing: {}'.format(time.ctime()))
         time.sleep(5)
