@@ -34,37 +34,31 @@ def run(argv=None):
   """Build and run the pipeline."""
   parser = argparse.ArgumentParser()
   
-  group = parser.add_mutually_exclusive_group(required=True)
-  
-  group.add_argument(
+
+  parser.add_argument(
+      '--project',
+      help=('Google Cloud Project ID'),
+      required=True)  
+  parser.add_argument(
       '--input_topic',
-      help=('Input PubSub topic of the form '
-            '"projects/<PROJECT>/topics/<TOPIC>".'))
-  group.add_argument(
-      '--input_subscription',
-      help=('Input PubSub subscription of the form '
-            '"projects/<PROJECT>/subscriptions/<SUBSCRIPTION>."'))
+      help=('Google Cloug PubSub topic name '),
+      required=True)
+
   known_args, pipeline_args = parser.parse_known_args(argv)
+  print('Pipeline args: {}'.format(pipeline_args))
+  print('Known args: {}'.format(known_args))
 
   # We use the save_main_session option because one or more DoFn's in this
   # workflow rely on global context (e.g., a module imported at module level).
-  pipeline_options = PipelineOptions(pipeline_args)
+  pipeline_options = PipelineOptions(
+    pipeline_args.append('--project={}'.format(known_args.project)))
   pipeline_options.view_as(SetupOptions).save_main_session = True
   pipeline_options.view_as(StandardOptions).streaming = True
   p = beam.Pipeline(options=pipeline_options)
 
   # Read from PubSub into a PCollection.
-  if known_args.input_subscription:
-    messages = (p
-                | beam.io.ReadFromPubSub(
-                    subscription=known_args.input_subscription)
-                .with_output_types(bytes))
-  else:
-    messages = (p
-                | beam.io.ReadFromPubSub(topic=known_args.input_topic)
-                .with_output_types(bytes))
-  # Read from PubSub into a PCollection.
-
+  TOPIC = 'projects/{}/topics/{}'.format(known_args.project,known_args.input_topic)
+  messages = p | beam.io.ReadFromPubSub(topic=TOPIC).with_output_types(bytes)
 
   windows = messages | beam.WindowInto(window.FixedWindows(size=15))
 
@@ -76,7 +70,7 @@ def run(argv=None):
   count_dict = count | 'to_dict' >> beam.Map(to_dict)
 
   # dataset_id.table_id (dataset needs to exist, but table will be created)
-  table_spec = 'vijays-sandbox:taxifare.traffic'
+  table_spec = '{}:taxifare.traffic'.format(known_args.project)
   
   count_dict | 'write_bq' >> beam.io.WriteToBigQuery(
     table_spec,

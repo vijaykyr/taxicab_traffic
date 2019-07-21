@@ -1,12 +1,15 @@
+###ADC###
+export GOOGLE_APPLICATION_CREDENTIALS=service_account_key.json
 ###iot_devices.py###
 python iot_devices.py --project=vijays-sandbox
 
 ###streaming_count.py###
 python streaming_count.py \
-	--input_topic projects/vijays-sandbox/topics/taxi_rides
+	--input_topic taxi_rides \
+	--project=vijays-sandbox
 
 python streaming_count.py \
-	--input_topic projects/vijays-sandbox/topics/taxi_rides \
+	--input_topic taxi_rides \
 	--runner=DataflowRunner \
 	--project=vijays-sandbox \
 	--temp_location=gs://vijays-sandbox/dataflow_streaming
