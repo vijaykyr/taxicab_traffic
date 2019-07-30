@@ -65,12 +65,12 @@ def run(argv=None):
   count = windows | 'count' >> beam.CombineGlobally(CountFn()).without_defaults()
 
   def to_dict(count):
-    return {'rides_last_10_min':count,'time':datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+    return {'trips_last_5min':count,'time':datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
   count_dict = count | 'to_dict' >> beam.Map(to_dict)
 
-  # dataset_id.table_id (dataset needs to exist, but table will be created)
-  table_spec = '{}:taxifare.traffic'.format(known_args.project)
+  # dataset_id.table_id (table needs to exist)
+  table_spec = '{}:taxifare.traffic_realtime'.format(known_args.project)
   
   count_dict | 'write_bq' >> beam.io.WriteToBigQuery(
     table_spec,

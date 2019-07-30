@@ -13,3 +13,24 @@ python streaming_count.py \
 	--runner=DataflowRunner \
 	--project=vijays-sandbox \
 	--temp_location=gs://vijays-sandbox/dataflow_streaming
+
+###BQ TABLE SCHEMA###
+[
+    {
+        "name": "trips_last_5min",
+        "type": "INTEGER",
+        "mode": "REQUIRED"
+    },
+    {
+        "name": "time",
+        "type": "TIMESTAMP",
+        "mode": "REQUIRED"
+    }
+]
+
+###BQ DELETE OLD DATA###
+DELETE
+FROM
+  `taxifare.traffic_realtime`
+WHERE
+  TIMESTAMP_DIFF(CURRENT_TIMESTAMP,time,HOUR) > 12
