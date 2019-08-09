@@ -61,7 +61,7 @@ def run(argv=None):
 
   pipeline = (p
        | 'read_from_pubusub' >> beam.io.ReadFromPubSub(topic=TOPIC).with_output_types(bytes)
-       | 'window' >> beam.WindowInto(window.SlidingWindows(size=300,period=15))
+       | 'window' >> # TODO
        | 'count' >> beam.CombineGlobally(CountFn()).without_defaults()
        | 'format_for_bq' >> beam.Map(to_bq_format)
        | 'write_to_bq' >> beam.io.WriteToBigQuery(
